@@ -89,60 +89,6 @@ def get_new_random_car_info(csv_path, sent_ids_path):
         print(f"读取或处理CSV时发生错误: {e}")
         return None, None, None
 
-
-def sanitize_feishu_markdown(text: str) -> str:
-    """
-    Filters out most Markdown syntax from a string, preserving only bold (**text**).
-    This is to ensure the text displays cleanly in Feishu cards.
-
-    - Removes headings (#, ##, etc.)
-    - Removes list markers (*, -, 1.)
-    - Removes blockquotes (>)
-    - Removes horizontal rules (---)
-    - Removes italics (*text* or _text_) by converting them to plain text.
-    - Removes strikethrough (~~text~~) by converting it to plain text.
-    - Removes inline code (`code`) by converting it to plain text.
-    - Removes links ([text](url)), keeping only the text.
-    """
-    if not text:
-        return ""
-
-    # Remove links, keeping the link text e.g., "[Google](url)" -> "Google"
-    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
-    
-    # Remove images, keeping the alt text e.g., "![alt](url)" -> "alt"
-    text = re.sub(r'!\[([^\]]*)\]\([^\)]+\)', r'\1', text)
-
-    # Remove headings (e.g., "## Title" -> "Title")
-    text = re.sub(r'^\s*#+\s+', '', text, flags=re.MULTILINE)
-
-    # Remove list markers (e.g., "* Item" -> "Item")
-    text = re.sub(r'^\s*([*-]|\d+\.)\s+', '', text, flags=re.MULTILINE)
-
-    # Remove blockquotes (e.g., "> Quote" -> "Quote")
-    text = re.sub(r'^\s*>\s+', '', text, flags=re.MULTILINE)
-
-    # Remove horizontal rules
-    text = re.sub(r'^\s*[-*_]{3,}\s*$', '', text, flags=re.MULTILINE)
-
-    # Remove strikethrough, keeping the text e.g., "~~del~~" -> "del"
-    text = re.sub(r'~~(.*?)~~', r'\1', text)
-    
-    # Remove inline code backticks
-    text = re.sub(r'`([^`]+)`', r'\1', text)
-
-    # Remove italics using single asterisks or underscores, keeping the text.
-    # This regex looks for a single asterisk that is not part of a double-asterisk (bold).
-    # It replaces *italic* with italic, but leaves **bold** alone.
-    text = re.sub(r'(?<!\*)\*([^\*]+)\*(?!\*)', r'\1', text)
-    text = re.sub(r'_([^_]+)_', r'\1', text)
-
-    # Clean up any resulting excess blank lines
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    
-    print("Markdown文本内容已过滤，仅保留加粗语法。")
-    return text.strip()
-
 def generate_car_description(car_name, api_key):
     print(f"开始为 '{car_name}' 生成描述...")
     try:
@@ -154,7 +100,7 @@ def generate_car_description(car_name, api_key):
             "3. 动力系统和性能表现\n"
             "4. 主要的科技配置和安全功能\n"
             "5. 市场定位、主要竞争对手和目标用户群体。\n"
-            "请用流畅、吸引人的语言进行描述，分段清晰，且不要在回复的开头和结尾添加任何```markdown或```标记。Markdown语法只能使用加粗，其他的不能使用"
+            "请用流畅、吸引人的语言进行描述，分段清晰"
         )
         client = genai.Client(api_key=api_key)
         grounding_tool = types.Tool(
@@ -281,8 +227,6 @@ def cronjon():
     if not description:
         print("生成车辆描述失败，将使用默认文本。")
         description = f"**车系介绍**\n检测到新车系 **{car_name}**，请相关同事关注。"
-    else:
-        description = sanitize_feishu_markdown(description)
 
     image_key = upload_image(token, image_url)
     if not image_key:
