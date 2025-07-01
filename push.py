@@ -6,6 +6,7 @@ import random
 from io import BytesIO
 from google import genai
 import re
+from google.genai import types
 
 
 APP_ID = os.environ.get('FEISHU_APP_ID')
@@ -111,9 +112,16 @@ def generate_car_description(car_name, api_key):
             "请用流畅、吸引人的语言进行描述，分段清晰，且不要在回复的开头和结尾添加任何```markdown或```标记。"
         )
         client = genai.Client(api_key=api_key)
+        grounding_tool = types.Tool(
+            google_search=types.GoogleSearch()
+        )
 
+        config = types.GenerateContentConfig(
+            tools=[grounding_tool]
+        )
         response = client.models.generate_content(
-            model="gemini-1.5-flash", contents=prompt
+            model="gemini-2.5-pro", contents=prompt,
+            config=config
         )
         cleaned_text = response.text.strip()
         print("成功从Gemini API获取并清洗描述。")
