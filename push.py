@@ -158,7 +158,7 @@ def generate_car_description(car_name, api_key):
         )
         client = genai.Client(api_key=api_key)
         grounding_tool = types.Tool(
-            Google Search=types.GoogleSearch()
+            google_search=types.GoogleSearch()
         )
 
         config = types.GenerateContentConfig(
