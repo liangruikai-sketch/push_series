@@ -91,12 +91,57 @@ def get_new_random_car_info(csv_path, sent_ids_path):
 
 
 def sanitize_feishu_markdown(text: str) -> str:
+    """
+    Filters out most Markdown syntax from a string, preserving only bold (**text**).
+    This is to ensure the text displays cleanly in Feishu cards.
+
+    - Removes headings (#, ##, etc.)
+    - Removes list markers (*, -, 1.)
+    - Removes blockquotes (>)
+    - Removes horizontal rules (---)
+    - Removes italics (*text* or _text_) by converting them to plain text.
+    - Removes strikethrough (~~text~~) by converting it to plain text.
+    - Removes inline code (`code`) by converting it to plain text.
+    - Removes links ([text](url)), keeping only the text.
+    """
     if not text:
         return ""
-    text = re.sub(r'^(#+)([^\s#])', r'\1 \2', text, flags=re.MULTILINE)
-    text = re.sub(r'^([*-])([^\s])', r'\1 \2', text, flags=re.MULTILINE)
-    print("Markdown文本内容已为飞书进行净化处理。")
-    return text
+
+    # Remove links, keeping the link text e.g., "[Google](url)" -> "Google"
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+    
+    # Remove images, keeping the alt text e.g., "![alt](url)" -> "alt"
+    text = re.sub(r'!\[([^\]]*)\]\([^\)]+\)', r'\1', text)
+
+    # Remove headings (e.g., "## Title" -> "Title")
+    text = re.sub(r'^\s*#+\s+', '', text, flags=re.MULTILINE)
+
+    # Remove list markers (e.g., "* Item" -> "Item")
+    text = re.sub(r'^\s*([*-]|\d+\.)\s+', '', text, flags=re.MULTILINE)
+
+    # Remove blockquotes (e.g., "> Quote" -> "Quote")
+    text = re.sub(r'^\s*>\s+', '', text, flags=re.MULTILINE)
+
+    # Remove horizontal rules
+    text = re.sub(r'^\s*[-*_]{3,}\s*$', '', text, flags=re.MULTILINE)
+
+    # Remove strikethrough, keeping the text e.g., "~~del~~" -> "del"
+    text = re.sub(r'~~(.*?)~~', r'\1', text)
+    
+    # Remove inline code backticks
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+
+    # Remove italics using single asterisks or underscores, keeping the text.
+    # This regex looks for a single asterisk that is not part of a double-asterisk (bold).
+    # It replaces *italic* with italic, but leaves **bold** alone.
+    text = re.sub(r'(?<!\*)\*([^\*]+)\*(?!\*)', r'\1', text)
+    text = re.sub(r'_([^_]+)_', r'\1', text)
+
+    # Clean up any resulting excess blank lines
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    
+    print("Markdown文本内容已过滤，仅保留加粗语法。")
+    return text.strip()
 
 def generate_car_description(car_name, api_key):
     print(f"开始为 '{car_name}' 生成描述...")
@@ -113,7 +158,7 @@ def generate_car_description(car_name, api_key):
         )
         client = genai.Client(api_key=api_key)
         grounding_tool = types.Tool(
-            google_search=types.GoogleSearch()
+            Google Search=types.GoogleSearch()
         )
 
         config = types.GenerateContentConfig(
