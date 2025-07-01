@@ -94,13 +94,13 @@ def generate_car_description(car_name, api_key):
     try:
         prompt = (
             f"请你作为一位专业的汽车评论员，详细介绍一下“{car_name}”这个车系。"
-            "请从以下几个方面展开，并使用段落组织语言:\n"
+            "请从以下几个方面展开:\n"
             "1. 品牌背景和车系历史\n"
             "2. 外观设计和内饰特点\n"
             "3. 动力系统和性能表现\n"
             "4. 主要的科技配置和安全功能\n"
             "5. 市场定位、主要竞争对手和目标用户群体。\n"
-            "请用流畅、吸引人的语言进行描述，分段清晰"
+            "请用流畅、吸引人的语言进行描述，使用段落组织语言，分段详细，可以使用Markdown语法加粗字体，其他语法不要涉及!!!"
         )
         client = genai.Client(api_key=api_key)
         grounding_tool = types.Tool(
