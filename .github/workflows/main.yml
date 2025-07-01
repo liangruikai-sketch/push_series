@@ -15,7 +15,7 @@ jobs:
     env:
       FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
       FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-      FEISHU_CHAT_ID: ${{ secrets.FEISHU_FEISHU_CHAT_IDURL }}
+      FEISHU_CHAT_ID: ${{ secrets.FEISHU_FEISHU_CHAT_ID }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     permissions:
