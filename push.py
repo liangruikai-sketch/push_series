@@ -8,16 +8,16 @@ from google import genai
 import re
 
 
-APP_ID = os.environ.get('FEISHU_APP_ID', "cli_a8e9418dc022d013")
-APP_SECRET = os.environ.get('FEISHU_APP_SECRET', "8bU6pc2UVoVWdIGYFr0X9eTcUDIPbNGO")
-CHAT_ID = os.environ.get('FEISHU_CHAT_ID', "oc_48d7b786df53146273583a123c434372")
+APP_ID = os.environ.get('FEISHU_APP_ID')
+APP_SECRET = os.environ.get('FEISHU_APP_SECRET')
+CHAT_ID = os.environ.get('FEISHU_CHAT_ID')
 CSV_FILE_PATH = '车系_url.csv'
 
 SENT_IDS_PATH = 'sent_car_ids.txt'
 CAR_SERIES_BASE_URL = "https://www.dongchedi.com/auto/series/"
 
 
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', "AIzaSyCMrShkjkit8fAMR_1_7P6v5u2YGUMCyGw")
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 
 def get_tenant_access_token(app_id, app_secret):
