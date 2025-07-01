@@ -109,7 +109,7 @@ def generate_car_description(car_name, api_key):
             "3. 动力系统和性能表现\n"
             "4. 主要的科技配置和安全功能\n"
             "5. 市场定位、主要竞争对手和目标用户群体。\n"
-            "请用流畅、吸引人的语言进行描述，分段清晰，且不要在回复的开头和结尾添加任何```markdown或```标记。"
+            "请用流畅、吸引人的语言进行描述，分段清晰，且不要在回复的开头和结尾添加任何```markdown或```标记。Markdown语法只能使用加粗，其他的不能使用"
         )
         client = genai.Client(api_key=api_key)
         grounding_tool = types.Tool(
